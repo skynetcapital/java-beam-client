@@ -43,3 +43,4 @@ transactions.forEach(transaction -> beamClient.cancelTransaction(transaction.get
 * Gson
 * OkHttp
 * JUnit (for testing)
+* Logback + Log4j

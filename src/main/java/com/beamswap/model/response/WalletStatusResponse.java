@@ -2,7 +2,8 @@ package com.beamswap.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class WalletStatusResponse extends BeamResponse {
+public class WalletStatusResponse extends BeamResponse<Object> {
+
     private long available;
     private long locked;
     private long maturing;
@@ -53,8 +54,7 @@ public class WalletStatusResponse extends BeamResponse {
     @Override
     public String toString() {
         return "WalletStatusResponse{" +
-                "result=" + getResult() +
-                ", available=" + available +
+                "available=" + available +
                 ", locked=" + locked +
                 ", maturing=" + maturing +
                 ", receiving=" + receiving +

@@ -3,7 +3,9 @@ package com.beamswap;
 import com.beamswap.exception.BeamException;
 import com.beamswap.model.TransactionStatus;
 import com.beamswap.model.TransactionStatusType;
+import com.beamswap.model.request.TransactionListRequest;
 import com.beamswap.model.response.BeamResponse;
+import com.beamswap.model.response.TransactionListResponse;
 import com.beamswap.model.response.WalletStatusResponse;
 import com.beamswap.model.request.BeamRequest;
 import com.beamswap.model.request.WalletStatusRequest;
@@ -21,6 +23,7 @@ import java.lang.reflect.Type;
 import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BeamClient {
 
@@ -39,7 +42,7 @@ public class BeamClient {
         this.port = port;
     }
 
-    private <E extends BeamResponse> E callBeamApi(final BeamRequest beamRequest, final Class<E> responseType) {
+    private <E extends BeamResponse<L>, L> E callBeamApi(final BeamRequest beamRequest, final Class<E> responseType, final Class<L> listType) {
         // Convert request object to JSON payload
         final String jsonPayload = gson.toJson(beamRequest);
         LOGGER.debug("JSON Payload = {}", jsonPayload);
@@ -48,9 +51,15 @@ public class BeamClient {
         final String jsonResponse = post(jsonPayload);
         LOGGER.debug("Response Type = {}, JSON Response = {}", responseType.getName(), jsonResponse);
 
-        // Retrieve result as BeamResponse, includes error Map
-        final BeamResponse beamResponse = gson.fromJson(jsonResponse, BeamResponse.class);
-        LOGGER.debug("Parsed JSON Result = {}", beamResponse);
+        // Convert response json to response type. If result is a list, this is the final deserialization.
+        E beamResponse = gson.fromJson(jsonResponse, responseType);
+
+        if (beamResponse.getResult() instanceof List) {
+            Type typeToken = TypeToken.getParameterized(ArrayList.class, listType).getType();
+
+            ArrayList<L> list = gson.fromJson(gson.toJson(beamResponse.getResult()), typeToken);
+            beamResponse.setResultList(list);
+        }
 
         // Check for errors
         if (beamResponse.getError() != null) {
@@ -61,11 +70,20 @@ public class BeamClient {
             );
         }
 
-        // Create response object from BeamResponse.getResult()
-        final E response = gson.fromJson(gson.toJson(beamResponse.getResult()), responseType);
-        LOGGER.debug("Final Response (toString) = {}", response);
+        if (beamResponse.getResult() instanceof Map) {
+            // Normal map. Convert "result" into JSON and read the whole object as the response type's class
+            E beamMapResponse = gson.fromJson(gson.toJson(beamResponse.getResult()), responseType);
 
-        return response;
+
+            // set jsonrpc, id, result. for internal parity with List style "result"s
+            beamMapResponse.setJsonVersion(beamResponse.getJsonVersion());
+            beamMapResponse.setRequestId(beamResponse.getRequestId());
+            beamMapResponse.setResult(beamResponse.getResult());
+
+            return beamMapResponse;
+        }
+
+        return beamResponse;
     }
 
     private String post(String json) {
@@ -84,15 +102,6 @@ public class BeamClient {
         }
     }
 
-    private void throwErrorFromResponse(String response) {
-        JsonElement error = jsonParser.parse(response).getAsJsonObject().get("error");
-
-        if (error != null) {
-            String errorMessage = error.getAsJsonObject().get("message").toString();
-            throw new RuntimeException("Error thrown by the API = " + errorMessage);
-        }
-    }
-
     /**
      * Returns wallet status, including available groth balances
      *
@@ -100,7 +109,13 @@ public class BeamClient {
      */
     public WalletStatusResponse getWalletStatus() {
         WalletStatusRequest request = new WalletStatusRequest();
-        WalletStatusResponse response = callBeamApi(request, WalletStatusResponse.class);
+        WalletStatusResponse response = callBeamApi(request, WalletStatusResponse.class, null);
+        return response;
+    }
+
+    public TransactionListResponse getTransactionList() {
+        TransactionListRequest request = new TransactionListRequest();
+        TransactionListResponse response = callBeamApi(request, TransactionListResponse.class, TransactionStatus.class);
         return response;
     }
 

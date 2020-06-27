@@ -1,6 +1,7 @@
 import com.beamswap.BeamClient;
 import com.beamswap.model.TransactionStatus;
 import com.beamswap.model.TransactionStatusType;
+import com.beamswap.model.response.TransactionListResponse;
 import com.beamswap.model.response.WalletStatusResponse;
 import org.junit.Test;
 
@@ -24,14 +25,16 @@ public class BeamClientTest {
         //assertTrue(walletStatus.getDifficulty() > 0);
     }
 
-//    @Test
-//    public void testGetTransactions() {
-//        List<TransactionStatus> transactionStatus = beamClient.getTransactions();
-//
-//        assertNotNull(transactionStatus);
-//
-//        System.out.println(transactionStatus);
-//    }
+    @Test
+    public void testGetTransactions() {
+        TransactionListResponse response = beamClient.getTransactionList();
+
+        assertNotNull(response);
+
+        System.out.println(response.getTransactionStatuses());
+
+        System.out.println(response);
+    }
 //
 //    //@Test
 //    public void testGetTransaction() {

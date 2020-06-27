@@ -29,15 +29,16 @@ transactions.forEach(transaction -> beamClient.cancelTransaction(transaction.get
 ```
 
 # To-do
-- [x] create_address
-- [x] validate_address
-- [x] tx_send
-- [x] tx_status
+- [ ] create_address
+- [ ] validate_address
+- [ ] tx_send
+- [ ] tx_status
 - [ ] tx_split
 - [x] wallet_status
 - [ ] get_utxo
-- [x] tx_list
-- [x] tx_cancel
+- [ ] tx_list
+- [ ] tx_cancel
+- [ ] ...
 
 # Dependencies
 * Gson

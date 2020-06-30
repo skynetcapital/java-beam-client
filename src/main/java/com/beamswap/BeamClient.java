@@ -107,8 +107,8 @@ public class BeamClient {
      *
      * @return {@link WalletStatusResponse} object containing current wallet status
      */
-    public WalletStatusResponse getWalletStatus() {
-        WalletStatusRequest request = new WalletStatusRequest();
+    public WalletStatusResponse getWalletStatus(final boolean includeAssets) {
+        WalletStatusRequest request = new WalletStatusRequest(includeAssets);
         WalletStatusResponse response = callBeamApi(request, WalletStatusResponse.class, null);
         return response;
     }

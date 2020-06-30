@@ -2,6 +2,7 @@ package com.beamswap.model.request;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class BeamRequest {
@@ -17,19 +18,19 @@ public class BeamRequest {
     @SerializedName("method")
     private String requestMethod;
 
-    @SerializedName("parameters")
+    @SerializedName("params")
     private Map<String, Object> parameters;
 
-    public BeamRequest(final String requestMethod, final Map<String, Object> parameters) {
+    public BeamRequest(final String requestMethod) {
         this.requestId = DEFAULT_REQUEST_ID;
         this.requestMethod = requestMethod;
-        this.parameters = parameters;
+        this.parameters = new HashMap<>();
     }
 
-    public BeamRequest(final int requestId, final String requestMethod, final Map<String, Object> parameters) {
+    public BeamRequest(final int requestId, final String requestMethod) {
         this.requestId = requestId;
         this.requestMethod = requestMethod;
-        this.parameters = parameters;
+        this.parameters = new HashMap<>();
     }
 
     public int getRequestId() {

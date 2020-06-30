@@ -1,14 +1,9 @@
 import com.beamswap.BeamClient;
-import com.beamswap.model.TransactionStatus;
-import com.beamswap.model.TransactionStatusType;
 import com.beamswap.model.response.TransactionListResponse;
 import com.beamswap.model.response.WalletStatusResponse;
 import org.junit.Test;
 
-import java.util.List;
-
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class BeamClientTest {
 
@@ -16,7 +11,20 @@ public class BeamClientTest {
 
     @Test
     public void testWalletStatus() {
-        WalletStatusResponse walletStatusResponse = beamClient.getWalletStatus();
+        boolean includeAssets = false;
+        WalletStatusResponse walletStatusResponse = beamClient.getWalletStatus(includeAssets);
+
+        assertNotNull(walletStatusResponse);
+
+        System.out.println(walletStatusResponse.toString());
+
+        //assertTrue(walletStatus.getDifficulty() > 0);
+    }
+
+    @Test
+    public void testWalletStatusWithAssets() {
+        boolean includeAssets = true;
+        WalletStatusResponse walletStatusResponse = beamClient.getWalletStatus(includeAssets);
 
         assertNotNull(walletStatusResponse);
 

@@ -4,6 +4,7 @@ import com.beamswap.model.response.WalletStatusResponse;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BeamClientTest {
 
@@ -15,6 +16,7 @@ public class BeamClientTest {
         WalletStatusResponse walletStatusResponse = beamClient.getWalletStatus(includeAssets);
 
         assertNotNull(walletStatusResponse);
+        assertTrue(walletStatusResponse.getAvailableGrothBalance() >= 0);
 
         System.out.println(walletStatusResponse.toString());
 
@@ -27,6 +29,7 @@ public class BeamClientTest {
         WalletStatusResponse walletStatusResponse = beamClient.getWalletStatus(includeAssets);
 
         assertNotNull(walletStatusResponse);
+        assertTrue(walletStatusResponse.getAvailableGrothBalance() >= 0);
 
         System.out.println(walletStatusResponse.toString());
 
